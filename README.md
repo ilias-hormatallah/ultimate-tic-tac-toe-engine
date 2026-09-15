@@ -2,7 +2,9 @@
 
 A competitive Ultimate Tic-Tac-Toe engine in a single C++17 file: bitboard representation, alpha–beta search with principal variation search and late move reductions, iterative deepening under a time budget, and a 2M-entry transposition table.
 
-**Winner of a 730-entrant university tournament** (ESILV, 1v1 bracket, won the final).
+**Winner of the ESILV Foundations-of-AI course tournament** (730 students, single-elimination 1v1 bracket, won the final).
+
+Course project (team of 4). I designed and implemented the entire engine, the benchmark and tournament harness, and ran all experiments.
 
 ## Build
 
@@ -59,9 +61,24 @@ Empty board, X to move: `0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 1`
 - **Move ordering.** Hash move, immediate sub-board / meta-board wins, blocking moves, two killer moves per ply, history heuristic, and a penalty for sending the opponent to a sub-board where they hold threats.
 - **Evaluation.** Sub-board tables weighted by strategic position (center and corners count more), meta-board line threats, and a bonus for holding two simultaneous meta-threats.
 
-## What the experiments showed
+## Results
 
-Head-to-head benchmarking against fixed opponents established that play quality *degraded* beyond roughly 2–3 seconds of effective search time at the engine's typical branching factor. This finding set the time budget used in the tournament. Details and error tables are in the [technical report](report.pdf).
+Each optimisation was measured in isolation against a fixed C++ reference engine (30 games, 1000 ms/move, empty starting board):
+
+| Version | W–L–D | Avg. depth |
+|---|---|---|
+| Plain alpha–beta | 4–24–2 | ~4 |
+| + transposition table (Zobrist) | 12–16–2 | ~6 |
+| + move ordering (killers, history) | 15–12–3 | ~7 |
+| + precomputed sub-board evaluation | 20–9–1 | ~8 |
+| + apply/undo, refined leaf eval | 23–6–1 | ~9 |
+| + LMR / PVS | 26–3–1 | ~11 |
+
+Final version: 86.7 % win rate, 95 % Wilson interval ≈ [70 %, 95 %]. The report also lists the changes that were tried and rejected, and why.
+
+**Search pathology.** Two builds differing only in the fraction of the time budget consumed before iterative deepening stops (40 % vs 65 %) were played against each other. At 1 s/move the 65 % build won clearly; at 10 s/move it *lost* — searching longer made play worse. The report proposes, as a hypothesis, that the move-ordering / LMR / PVS stack front-loads the good lines, so late deep iterations mostly explore new positions scored by an imperfect heuristic. This trade-off set the time threshold used in the tournament.
+
+Full technical report available on request.
 
 ## License
 

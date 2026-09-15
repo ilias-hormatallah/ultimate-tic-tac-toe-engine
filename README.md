@@ -4,8 +4,6 @@ A competitive Ultimate Tic-Tac-Toe engine in a single C++17 file: bitboard repre
 
 **Winner of the ESILV Foundations-of-AI course tournament** (730 students, single-elimination 1v1 bracket, won the final).
 
-Course project (team of 4). I designed and implemented the entire engine, the benchmark and tournament harness, and ran all experiments.
-
 ## Build
 
 ```bash
